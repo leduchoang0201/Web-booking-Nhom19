@@ -37,7 +37,6 @@
         <url-pattern>/vnpayrefund/*</url-pattern>
     </servlet-mapping>
 
-    <!-- This is what you need -->
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>
