@@ -1,7 +1,7 @@
-
 package com.vnpay.common;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -22,11 +22,10 @@ import jakarta.servlet.http.HttpServletRequest;
 public class Config {
 
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/Hotel/vnpay_return.jsp";
-    public static String vnp_TmnCode = "WXIHXMMK";
-    public static String secretKey = "N5W5Y6YN5HRKRGZ0QCS4CZR1JUB05ANQ";
+    public static String vnp_ReturnUrl = "http://localhost:8080/Hotel/VnpayReturnServlet";
+    public static String vnp_TmnCode = "NR98ANHQ";
+    public static String secretKey = "MQCI5UZCZOR2SFILCONGZB4QFOLO8XHW"; // Cập nhật secretKey chính xác
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-
     public static String md5(String message) {
         String digest = null;
         try {
@@ -63,30 +62,32 @@ public class Config {
         return digest;
     }
 
-    //Util for VNPAY
-    public static String hashAllFields(Map fields) {
-        List fieldNames = new ArrayList(fields.keySet());
+    // Util for VNPAY - Đã sửa để mã hóa URL
+    public static String hashAllFields(Map<String, String> fields) {
+        List<String> fieldNames = new ArrayList<>(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
+        Iterator<String> itr = fieldNames.iterator();
         while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = (String) fields.get(fieldName);
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                sb.append(fieldName);
-                sb.append("=");
-                sb.append(fieldValue);
+            String fieldName = itr.next();
+            String fieldValue = fields.get(fieldName);
+            if (fieldValue != null && !fieldValue.isEmpty()) {
+                try {
+                    String encodedValue = URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()).replace("+", "%20");
+                    sb.append(fieldName).append("=").append(encodedValue);
+                } catch (UnsupportedEncodingException e) {
+                    sb.append(fieldName).append("=").append(fieldValue); // Fallback nếu mã hóa thất bại
+                }
             }
             if (itr.hasNext()) {
                 sb.append("&");
             }
         }
-        return hmacSHA512(secretKey,sb.toString());
+        return hmacSHA512(secretKey, sb.toString());
     }
-    
+
     public static String hmacSHA512(final String key, final String data) {
         try {
-
             if (key == null || data == null) {
                 throw new NullPointerException();
             }
@@ -101,12 +102,11 @@ public class Config {
                 sb.append(String.format("%02x", b & 0xff));
             }
             return sb.toString();
-
         } catch (Exception ex) {
             return "";
         }
     }
-    
+
     public static String getIpAddress(HttpServletRequest request) {
         String ipAdress;
         try {

@@ -36,7 +36,8 @@
             <th>Tên phòng</th>
             <th>Loại</th>
             <th>Giá</th>
-            <th>Số lượng</th>
+            <th>Số người</th>
+            <th>Số phòng</th>
             <th>Có sẵn</th>
             <th>Ảnh</th>
             <th>Địa điểm</th>
@@ -55,6 +56,7 @@
             <td><%= room.getType() %></td>
             <td><%= room.getPrice() %></td>
             <td><%= room.getCapacity() %></td>
+            <td><%= room.getQuantity() %></td>
             <td><%= room.isAvailable() ? "Có" : "Không" %></td>
             <td><%= room.getImage() %></td>
             <td><%= room.getLocation() %></td>
@@ -371,10 +373,10 @@ updateRoomModal.addEventListener('show.bs.modal', function(event) {
                     </div>
                     <div class="mb-3">
                         <label for="updateBookingStatus" class="form-label">Trạng thái</label>
-                        <select class="form-control" id="updateBookingStatus" name="status" required>
-                            <option value="Pending">Pending</option>
+                        <select class="form-control" id="updateBookingStatus" name="status" required>   
                             <option value="Confirmed">Confirmed</option>
                             <option value="Cancelled">Cancelled</option>
+                            <option value="Check_out">Check out</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary" name="action" value="update">Cập nhật lịch đặt</button>
