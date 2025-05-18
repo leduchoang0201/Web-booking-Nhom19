@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import com.vnpay.common.Config;
 
 /**
  * Servlet implementation class PaymentServlet
@@ -29,7 +30,7 @@ public class PaymentServlet extends HttpServlet {
         String checkinDate = request.getParameter("checkinDate");
         String checkoutDate = request.getParameter("checkoutDate");
         String totalPrice = request.getParameter("totalPrice");
-        
+
         int amount = Integer.parseInt(totalPrice);
         HttpSession session = request.getSession();
         session.setAttribute("roomId", roomId);
@@ -40,7 +41,7 @@ public class PaymentServlet extends HttpServlet {
         session.setAttribute("checkinDate", checkinDate);
         session.setAttribute("checkoutDate", checkoutDate);
         session.setAttribute("totalPrice", totalPrice);
-        
+
         // Truyền dữ liệu đến trang thanh toán
         request.setAttribute("amount", amount);
         request.getRequestDispatcher("vnpay_pay.jsp").forward(request, response);

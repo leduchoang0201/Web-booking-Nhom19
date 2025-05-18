@@ -6,16 +6,18 @@ public class Room {
 	private String type;
 	private double price;
 	private int capacity;
+	private int quantity;
 	private boolean available;
 	private String image;
 	private String location;
-	public Room(int id, String name, String type, double price, int capacity, boolean available, String image, String location) {
+	public Room(int id, String name, String type, double price, int capacity,int quantity, boolean available, String image, String location) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.type = type;
 		this.price = price;
 		this.capacity = capacity;
+		this.quantity = quantity;
 		this.available = available;
 		this.image = image;
 		this.location = location;
@@ -58,6 +60,12 @@ public class Room {
 	}
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
+	}
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 	public boolean isAvailable() {
 		return available;

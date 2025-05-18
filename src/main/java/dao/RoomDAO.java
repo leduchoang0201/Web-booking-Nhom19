@@ -117,6 +117,7 @@ public class RoomDAO implements InterfaceDao<Room> {
                     rs.getString("room_type"),
                     rs.getInt("price"),
                     rs.getInt("capacity"),
+						rs.getInt("quantity"),
                     rs.getBoolean("status"),
                     rs.getString("image"),
                     rs.getString("location")
@@ -145,6 +146,7 @@ public class RoomDAO implements InterfaceDao<Room> {
 	                rs.getString("room_type"),
 	                rs.getDouble("price"),
 	                rs.getInt("capacity"),
+						rs.getInt("quantity"),
 	                rs.getBoolean("status"),
 	                rs.getString("image"),
 	                rs.getString("location")
@@ -187,6 +189,7 @@ public class RoomDAO implements InterfaceDao<Room> {
 	                rs.getString("room_type"),
 	                rs.getDouble("price"),
 	                rs.getInt("capacity"),
+						rs.getInt("quantity"),
 	                rs.getBoolean("status"),
 	                rs.getString("image"),
 	                rs.getString("location")
