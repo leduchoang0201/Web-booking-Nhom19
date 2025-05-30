@@ -26,6 +26,8 @@ public class Config {
     public static String vnp_TmnCode = "NR98ANHQ";
     public static String secretKey = "MQCI5UZCZOR2SFILCONGZB4QFOLO8XHW"; // Cập nhật secretKey chính xác
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+
+
     public static String md5(String message) {
         String digest = null;
         try {
