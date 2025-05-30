@@ -1,0 +1,24 @@
+{
+    "en": {
+        "title": "Register",
+        "header": "Connect Value - Experience Excellence with VinClub",
+        "fullnamePlaceholder": "Full Name*",
+        "emailPlaceholder": "Email/Phone Number*",
+        "passwordPlaceholder": "Password*",
+        "confirmPasswordPlaceholder": "Confirm Password*",
+        "registerButton": "REGISTER",
+        "alreadyHaveAccount": "Already have an account? ",
+        "loginLink": "Login"
+    },
+    "vi": {
+        "title": "Đăng Ký",
+        "header": "Kết nối giá trị - Trải nghiệm tinh hoa cùng VinClub",
+        "fullnamePlaceholder": "Họ và tên*",
+        "emailPlaceholder": "Email/Số điện thoại*",
+        "passwordPlaceholder": "Mật khẩu*",
+        "confirmPasswordPlaceholder": "Nhập lại mật khẩu*",
+        "registerButton": "ĐĂNG KÝ",
+        "alreadyHaveAccount": "Bạn đã có tài khoản? ",
+        "loginLink": "Đăng nhập"
+    }
+}
