@@ -35,7 +35,7 @@ public class LogOutServlet extends HttpServlet {
             session.invalidate(); 
         }
         GetCookie.deleteUserCookie(response);
-        response.sendRedirect("home.jsp");
+        response.sendRedirect("login.jsp");
     }
 
     /**
