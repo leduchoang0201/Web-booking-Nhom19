@@ -17,7 +17,7 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="stylesheet" type="text/css"
 	href="static/css/index.css">
-</head>
+    <link rel="stylesheet" type="text/css" href="static/css/room.css">
 <link rel="stylesheet"
 	href="lib/bootstrap-5.0.2-dist/css/bootstrap.min.css">
 <link
@@ -48,5 +48,16 @@
         <% } %>
     </nav>
 </header>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.money').forEach(el => {
+                const num = parseFloat(el.textContent.replace(/[^\d.-]/g, ''));
+                if (!isNaN(num)) {
+                    el.textContent = num.toLocaleString('vi-VN') + ' VNĐ';
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
