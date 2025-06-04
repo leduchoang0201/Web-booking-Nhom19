@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-
 import java.io.IOException;
+
 import model.Cart;
 
 @WebServlet("/cart")
@@ -19,13 +19,13 @@ public class CartServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Cart cart = (Cart) session.getAttribute("cart");
 
-        if (cart == null) {
-            cart = new Cart(null); // khởi tạo cart trống
-            session.setAttribute("cart", cart);
+        if (cart != null) {
+            request.setAttribute("cartItems", cart.getItems());
+            request.setAttribute("total", cart.getTotal());
+        } else {
+            request.setAttribute("cartItems", null);
+            request.setAttribute("total", 0);
         }
-
-        request.setAttribute("cartItems", cart.getItems());
-        request.setAttribute("total", cart.getTotal());
 
         request.getRequestDispatcher("cart.jsp").forward(request, response);
     }

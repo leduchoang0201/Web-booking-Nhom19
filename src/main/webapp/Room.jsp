@@ -7,9 +7,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Danh sách phòng</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/css/room.css">
 </head>
+
 <style>
-		.content {
+    .content {
     padding-top: 150px;
 }
 		
@@ -90,8 +92,21 @@
         }
     </style>
  <jsp:include page="Header.jsp" />
- 
-    <div class="content">
+<div class="content">
+    <%
+        String success = request.getParameter("success");
+        String error = request.getParameter("error");
+    %>
+
+    <% if ("added".equals(success)) { %>
+    <div class="alert alert-success">Đặt phòng thành công!</div>
+    <% } else if ("invalid_date".equals(error)) { %>
+    <div class="alert alert-danger">Ngày trả phải sau ngày nhận!</div>
+    <% } else if ("room_not_found".equals(error)) { %>
+    <div class="alert alert-danger">Không tìm thấy phòng!</div>
+    <% } else if ("exception".equals(error)) { %>
+    <div class="alert alert-danger">Có lỗi xảy ra! Vui lòng thử lại.</div>
+    <% } %>
         <h1>Danh sách phòng</h1>
         <nav>
 		<button onclick="location.href='Category?location=Phú Quốc'">Phú Quốc</button>
@@ -115,7 +130,7 @@
                  alt="<%= room.getName() %>">
             <div class="card-body">
                 <h3><%= room.getName() %></h3>
-                <p><%= room.getPrice() %> VNĐ mỗi đêm</p>
+                <p><span class="money"><%= room.getPrice() %></span> mỗi đêm</p>
                 <p>Cơ sở: <%= room.getLocation() %></p>
                 <p>Còn phòng: 
                     <% if (room.isAvailable()) { %>
@@ -166,17 +181,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <h2>${message}</h2> <!-- Thông báo lỗi nếu có -->
-                        <form id="paymentForm" action=PaymentServlet method="POST">
+                        <form id="addToCartForm" action="addToCart" method="POST">
                             <input type="hidden" id="roomId" name="roomId">
                             <input type="hidden" id="roomName" name="roomName">
                             <input type="hidden" id="roomPrice" name="roomPrice">
                             <input type="hidden" id="userId" name="userId">
-
-                            <div class="mb-3">
-                                <label for="customerName" class="form-label">Họ và Tên</label>
-                                <input type="text" class="form-control" id="customerName" name="customerName" required>
-                            </div>
                             <div class="mb-3">
                                 <label for="checkinDate" class="form-label">Ngày Nhận Phòng</label>
                                 <input type="date" class="form-control" id="checkinDate" name="checkinDate" required>
@@ -186,61 +195,92 @@
                                 <input type="date" class="form-control" id="checkoutDate" name="checkoutDate" required>
                             </div>
                             <div class="mb-3">
+                                <label for="quantity" class="form-label">Số lượng phòng</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" required>
+                            </div>
+                            <div class="mb-3">
                                 <label for="totalPrice" class="form-label">Tổng Số Tiền (VNĐ)</label>
                                 <input type="text" class="form-control" id="totalPrice" name="totalPrice" readonly>
                             </div>
-                            <button type="submit" class="btn btn-primary">Thanh Toán</button>
+                            <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script>
+<script>
     const bookingButtons = document.querySelectorAll('.book-now');
+    const modalElement = document.getElementById('bookingModal');
+    const modal = new bootstrap.Modal(modalElement);
+
+    const roomIdInput = document.getElementById('roomId');
+    const roomNameInput = document.getElementById('roomName');
+    const roomPriceInput = document.getElementById('roomPrice');
+    const userIdInput = document.getElementById('userId');
+    const totalPriceInput = document.getElementById('totalPrice');
+
+    const checkinInput = document.getElementById('checkinDate');
+    const checkoutInput = document.getElementById('checkoutDate');
+    const quantityInput = document.getElementById('quantity');
+
+    // Mở modal và gán dữ liệu từ button
     bookingButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            const roomId = e.target.getAttribute('data-room-id');
-            const roomName = e.target.getAttribute('data-room-name');
-            const roomPrice = parseFloat(e.target.getAttribute('data-room-price'));
-            const userId = e.target.getAttribute('data-user-id');
+            const roomId = button.getAttribute('data-room-id');
+            const roomName = button.getAttribute('data-room-name');
+            const roomPrice = parseFloat(button.getAttribute('data-room-price'));
+            const userId = button.getAttribute('data-user-id');
 
-            document.getElementById('roomId').value = roomId;
-            document.getElementById('roomName').value = roomName;
-            document.getElementById('roomPrice').value = roomPrice;
-            document.getElementById('userId').value = userId;
-            document.getElementById('totalPrice').value = roomPrice;
+            roomIdInput.value = roomId;
+            roomNameInput.value = roomName;
+            roomPriceInput.value = roomPrice;
+            userIdInput.value = userId;
 
-            // Mở modal
-            if (!modalElement.classList.contains('show')) {
-	            modal.show();
-	        }
-            modalElement.addEventListener('hidden.bs.modal', function () {
-                document.body.style.overflow = 'auto';
-            });
+            quantityInput.value = 1;
+            totalPriceInput.value = roomPrice;
+
+            modal.show();
         });
     });
-    const checkinDateInput = document.getElementById('checkinDate');
-    const checkoutDateInput = document.getElementById('checkoutDate');
 
-    // Hàm để cập nhật ngày trả phòng tối thiểu
-    checkinDateInput.addEventListener('change', function () {
-        const checkinDate = new Date(checkinDateInput.value);
-        
-        // Thêm 1 ngày vào ngày nhận phòng để làm ngày trả phòng tối thiểu
+    // Cập nhật ngày trả phòng tối thiểu
+    checkinInput.addEventListener('change', function () {
+        const checkinDate = new Date(checkinInput.value);
         checkinDate.setDate(checkinDate.getDate() + 1);
+        const minCheckout = checkinDate.toISOString().split('T')[0];
+        checkoutInput.setAttribute('min', minCheckout);
 
-        // Cập nhật giá trị ngày trả phòng tối thiểu
-        const minCheckoutDate = checkinDate.toISOString().split('T')[0]; // Định dạng YYYY-MM-DD
-        checkoutDateInput.setAttribute('min', minCheckoutDate);
-        
-        // Nếu ngày trả phòng đã được chọn trước đó, kiểm tra xem nó có hợp lệ không
-        if (new Date(checkoutDateInput.value) < checkinDate) {
-            checkoutDateInput.value = minCheckoutDate;
+        if (new Date(checkoutInput.value) < checkinDate) {
+            checkoutInput.value = minCheckout;
         }
+
+        updateTotalPrice();
     });
-    
-    </script>
-    <jsp:include page="Footer.jsp" />
+
+    // Cập nhật lại tổng tiền mỗi khi người dùng thay đổi ngày trả hoặc số lượng
+    checkoutInput.addEventListener('change', updateTotalPrice);
+    quantityInput.addEventListener('input', updateTotalPrice);
+
+    function updateTotalPrice() {
+        const checkinDate = new Date(checkinInput.value);
+        const checkoutDate = new Date(checkoutInput.value);
+        const pricePerNight = parseFloat(roomPriceInput.value);
+        const quantity = parseInt(quantityInput.value);
+
+        if (!isNaN(checkinDate) && !isNaN(checkoutDate) && checkoutDate > checkinDate) {
+            const timeDiff = checkoutDate - checkinDate;
+            const days = timeDiff / (1000 * 60 * 60 * 24);
+            const total = days * quantity * pricePerNight;
+
+            // Format tiền theo chuẩn Việt Nam
+            totalPriceInput.value = total.toLocaleString('vi-VN') + ' VNĐ';
+        } else {
+            totalPriceInput.value = "0";
+        }
+    }
+</script>
+
+<jsp:include page="Footer.jsp" />
 </body>
 </html>
