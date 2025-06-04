@@ -5,6 +5,10 @@
     <groupId>com.example</groupId>
     <artifactId>web-booking</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>tool</module>
+    </modules>
     <dependencies>
 
         <dependency>
