@@ -8,7 +8,7 @@ public class Cart {
     private List<CartItem> items;
 
     public Cart(List<CartItem> items) {
-        this.items = new ArrayList<>();
+        this.items = items;
     }
 
     public void add (Room room, Date checkIn, Date checkOut, int quantity) {

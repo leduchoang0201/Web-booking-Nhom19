@@ -16,7 +16,7 @@
     margin: 0;
     padding: 0;
     background-color: #f5f5f5;
-}
+    }
 
 .container {
     max-width: 100%;
@@ -129,9 +129,8 @@
 
     </style>
 </head>
+<jsp:include page="Header.jsp" />
 <body>
-    <jsp:include page="Header.jsp" />
-
     <div class="container">
         <h1 class="heading">Thông tin đặt phòng</h1>
 
