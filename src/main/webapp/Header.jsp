@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ page import="model.User" %>
 
-	
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,18 +26,18 @@
 </head>
 <body>
 	<header class="header">
-    <a href="#" class="logo">HotelBooking</a> 
+    <a href="home.jsp" class="logo">HotelBooking</a>
     <label for="" class="icons">
         <i class="fa-solid fa-bars"></i>
     </label>
     <nav class="navbars">
-        <a style="color: #c0a600" href="home.jsp">TRANG CHỦ</a> 
+        <a style="color: #c0a600" href="home.jsp">TRANG CHỦ</a>
         <a href="rooms">PHÒNG</a>
-        <a href="about.jsp">GIỚI THIỆU</a> 
-        
-        <a href="about.jsp">LIÊN HỆ</a>
-        <% if (request.getSession().getAttribute("User") != null) { 
-            User user = (User) request.getSession().getAttribute("User"); 
+        <a href="about.jsp">GIỚI THIỆU & LIÊN HỆ</a>
+
+        <a href="cart"><i class="fa-solid fa-cart-shopping"></i>Giỏ Hàng</a>
+        <% if (request.getSession().getAttribute("User") != null) {
+            User user = (User) request.getSession().getAttribute("User");
         %>
             <a href="info.jsp" class="d-block"><i class="fa-solid fa-user"></i> <%= user.getName() %></a>
             <a href="logout" class="nav-link">

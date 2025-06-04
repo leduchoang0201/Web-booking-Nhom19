@@ -124,7 +124,7 @@
                         <span style="color: red;">Không</span>
                     <% } %>
                 </p>
-                <p>Khách hàng: <%= room.getCapacity() %></p>
+                <p>Số người: <%= room.getCapacity() %></p>
 
                 <% if (room.isAvailable()) { %>
                     <% if (user != null) { %>
