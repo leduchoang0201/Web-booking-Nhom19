@@ -44,7 +44,6 @@ public class CartItem {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    // Tính ngày số ngày đặt phòng
     public double getSubtotal() {
         long milliseconds = checkOut.getTime() - checkIn.getTime();
         int numberOfDays = (int) (milliseconds / (1000 * 60 * 60 * 24));

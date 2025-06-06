@@ -15,8 +15,8 @@ import jakarta.mail.internet.*;
 
 public class SendEmailRegister {
 	    public static void sendRegistrationConfirmation(String toEmail) {
-	        String fromEmail = "phumaihoang45@gmail.com";  // Địa chỉ email người gửi
-	        String password = "kfzy oljg mtob comd";  // Mật khẩu email 
+			String fromEmail = "leduchoang258@gmail.com";
+			String password = "gvbs ebwo bsqa kphi";
 	        
 	        // Cấu hình thông tin kết nối với máy chủ SMTP
 	        Properties properties = new Properties();
