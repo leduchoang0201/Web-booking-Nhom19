@@ -27,7 +27,7 @@ public class UpdateCartServlet extends HttpServlet {
         Cart cart = (Cart) session.getAttribute("cart");
 
         if (cart != null) {
-            List<CartItem> cartItems = cart.getItems();  // Lấy danh sách từ đối tượng Cart
+            List<CartItem> cartItems = cart.getItems();
 
             if (index >= 0 && index < cartItems.size()) {
                 CartItem item = cartItems.get(index);

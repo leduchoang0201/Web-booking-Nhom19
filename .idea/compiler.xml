@@ -8,10 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="web-booking (1)" />
         <module name="tool" />
+        <module name="web-booking" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="web-booking (1)" target="9" />
-    </bytecodeTargetLevel>
   </component>
 </project>

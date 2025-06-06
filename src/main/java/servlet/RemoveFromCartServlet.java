@@ -25,7 +25,7 @@ public class RemoveFromCartServlet extends HttpServlet {
             cart.removeItem(index);
         }
 
-        response.sendRedirect( request.getContextPath() + "Hotel/cart");
+        response.sendRedirect( "cart");
 
     }
 }
