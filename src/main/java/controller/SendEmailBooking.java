@@ -15,8 +15,8 @@ import jakarta.mail.internet.MimeMessage;
 public class SendEmailBooking {
 
     public static void sendBookingInfo(String toEmail, String name, String roomName, Date checkInDate, Date checkOutDate, String roomPrice) {
-        String fromEmail = "phumaihoang45@gmail.com";  
-        String password = "kfzy oljg mtob comd";  
+        String fromEmail = "leduchoang258@gmail.com";
+        String password = "gvbs ebwo bsqa kphi";
         
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
