@@ -7,9 +7,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
 
-import model.Cart;
+import java.io.IOException;
+import java.util.List;
+
+import model.CartItem;
 
 @WebServlet("/cart")
 public class CartServlet extends HttpServlet {
@@ -17,16 +19,17 @@ public class CartServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute("cart");
+        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
+        double total = 0;
         if (cart != null) {
-            request.setAttribute("cartItems", cart.getItems());
-            request.setAttribute("total", cart.getTotal());
-        } else {
-            request.setAttribute("cartItems", null);
-            request.setAttribute("total", 0);
+            for (CartItem item : cart) {
+                total += item.getSubtotal();
+            }
         }
 
+        request.setAttribute("cartItems", cart);
+        request.setAttribute("total", total);
         request.getRequestDispatcher("cart.jsp").forward(request, response);
     }
 }

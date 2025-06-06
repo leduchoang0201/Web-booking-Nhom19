@@ -6,8 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="web-booking (1)" />
         <module name="tool" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="web-booking (1)" target="9" />
+    </bytecodeTargetLevel>
   </component>
 </project>
