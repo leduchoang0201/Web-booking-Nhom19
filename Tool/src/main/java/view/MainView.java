@@ -7,15 +7,15 @@ public class MainView extends JFrame {
     public JComboBox<String> keySizeBox = new JComboBox<>(new String[]{"1024", "2048", "4096"});
     public JButton genKeyBtn = new JButton("Tạo cặp khóa RSA");
     public JButton loadPrivateKeyBtn = new JButton("Tải Private Key");
+    public JButton loadFileBtn = new JButton("Tải file cần ký");
     public JButton encryptBtn = new JButton("Ký bằng Private Key");
+    public JButton copyBtn = new JButton("Copy");
     public JButton saveKeyBtn = new JButton("Lưu khóa");
 
-    public JTextArea inputArea = new JTextArea(5, 40);
     public JTextArea outputArea = new JTextArea(5, 40);
-
     public JLabel privateKeyStatus = new JLabel("Chưa có Private Key");
+    public JLabel privateKeyLoadStatus = new JLabel("Chưa tải Private Key");
 
-    // Thay JLabel bằng JTextArea cho Private và Public Key
     public JTextArea privateKeyArea = new JTextArea(5, 30);
     public JTextArea publicKeyArea = new JTextArea(5, 30);
 
@@ -33,7 +33,6 @@ public class MainView extends JFrame {
         topPanel.add(new JLabel("Chọn độ dài khóa:"));
         topPanel.add(keySizeBox);
 
-        // Style buttons with colors
         genKeyBtn.setBackground(new Color(0, 122, 255));
         genKeyBtn.setForeground(Color.WHITE);
         genKeyBtn.setOpaque(true);
@@ -52,7 +51,9 @@ public class MainView extends JFrame {
         loadPrivateKeyBtn.setBorderPainted(false);
         topPanel.add(loadPrivateKeyBtn);
 
-
+        privateKeyLoadStatus.setForeground(Color.BLUE);
+        privateKeyLoadStatus.setFont(new Font("Arial", Font.BOLD, 12));
+        topPanel.add(privateKeyLoadStatus);
 
         privateKeyStatus.setForeground(Color.RED);
         privateKeyStatus.setFont(new Font("Arial", Font.BOLD, 12));
@@ -73,31 +74,41 @@ public class MainView extends JFrame {
         JScrollPane publicScroll = new JScrollPane(publicKeyArea);
         publicScroll.setPreferredSize(new Dimension(350, 100));
 
-        // Panel chứa 2 vùng hiển thị khóa nằm ngang cho gọn
+        // Panel chứa 2 vùng hiển thị khóa nằm ngang
         JPanel keyPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
         keyPanel.add(privateScroll);
         keyPanel.add(publicScroll);
 
-        // Text areas nhập/xuất chuỗi
-        inputArea.setLineWrap(true);
-        inputArea.setBorder(BorderFactory.createTitledBorder("🔤 Nhập chuỗi cần ký"));
+        // Text area xuất chữ ký
         outputArea.setLineWrap(true);
         outputArea.setEditable(false);
-        outputArea.setBorder(BorderFactory.createTitledBorder("📤 Chuỗi đã mã hóa (ký)"));
+        outputArea.setBorder(BorderFactory.createTitledBorder("📤 Chữ ký của file"));
 
-        JPanel textPanel = new JPanel(new GridLayout(2, 1, 10, 10));
-        textPanel.add(new JScrollPane(inputArea));
-        textPanel.add(new JScrollPane(outputArea));
+        JPanel textPanel = new JPanel(new BorderLayout(10, 10));
+        textPanel.add(new JScrollPane(outputArea), BorderLayout.CENTER);
 
-        // Nút ký ở dưới cùng
-        JPanel bottomPanel = new JPanel();
+        // Bottom panel chứa nút tải file, ký và copy
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        loadFileBtn.setBackground(new Color(255, 87, 51));
+        loadFileBtn.setForeground(Color.WHITE);
+        loadFileBtn.setOpaque(true);
+        loadFileBtn.setBorderPainted(false);
+        bottomPanel.add(loadFileBtn);
+
         encryptBtn.setBackground(new Color(88, 86, 214));
         encryptBtn.setForeground(Color.WHITE);
         encryptBtn.setOpaque(true);
         encryptBtn.setBorderPainted(false);
         bottomPanel.add(encryptBtn);
 
-        // Panel chính giữa: 2 vùng khóa trên, text nhập/xuất dưới
+        copyBtn.setBackground(new Color(108, 117, 125));
+        copyBtn.setForeground(Color.WHITE);
+        copyBtn.setOpaque(true);
+        copyBtn.setBorderPainted(false);
+        copyBtn.setEnabled(false);
+        bottomPanel.add(copyBtn);
+
+        // Panel chính giữa
         JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
         centerPanel.add(keyPanel, BorderLayout.NORTH);
         centerPanel.add(textPanel, BorderLayout.CENTER);
@@ -109,5 +120,6 @@ public class MainView extends JFrame {
         add(mainPanel);
 
         saveKeyBtn.setEnabled(false);
+        encryptBtn.setEnabled(false); // Vô hiệu hóa nút ký mặc định
     }
 }
