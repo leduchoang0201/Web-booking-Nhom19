@@ -2,6 +2,10 @@
 <%@ page import="java.util.List"%>
 <%@ page import="model.Room"%>
 <%@ page import="model.User"%>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -227,6 +231,10 @@
     const checkoutInput = document.getElementById('checkoutDate');
     const quantityInput = document.getElementById('quantity');
 
+    window.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+        checkinInput.setAttribute('min', today);
+    });
     // Mở modal và gán dữ liệu từ button
     bookingButtons.forEach(button => {
         button.addEventListener('click', (e) => {

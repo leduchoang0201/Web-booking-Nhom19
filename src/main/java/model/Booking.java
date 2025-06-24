@@ -9,6 +9,8 @@ public class Booking {
     private Date checkOut;
     private String status;
     private Date createdAt;
+    private int quantity;
+    private int orderId;
     public Booking() {};
     public Booking(int bookingId, int userId, int roomId, Date checkIn, Date checkOut, String status) {
         this.bookingId = bookingId;
@@ -84,5 +86,18 @@ public class Booking {
 		return "Booking [bookingId=" + bookingId + ", userId=" + userId + ", roomId=" + roomId + ", checkIn=" + checkIn
 				+ ", checkOut=" + checkOut + ", status=" + status + ", createdAt=" + createdAt + "]";
 	}
-    
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
 }
