@@ -31,4 +31,10 @@ public class Cart {
         return items.stream().mapToDouble(CartItem::getSubtotal).sum();
     }
 
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "items=" + items +
+                '}';
+    }
 }
