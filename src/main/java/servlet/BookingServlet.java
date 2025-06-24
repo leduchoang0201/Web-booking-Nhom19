@@ -52,7 +52,6 @@ public class BookingServlet extends HttpServlet {
         int result = bookingDAO.insert(booking); // Tạo lịch đặt (booking)
 
         if (result > 0) {
-            roomDAO.updateRoomAvailability(roomId, 0);
             //Send mail nếu tạo lịch đặt thành công
             SendEmailBooking.sendBookingInfo(email, name, roomName, checkInDate, checkOutDate, roomPrice); 
 

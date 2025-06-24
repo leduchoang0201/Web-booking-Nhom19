@@ -6,7 +6,6 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Be Vietnam Pro', sans-serif;
-    width: auto;
 }
 
 nav,header a  {
@@ -31,12 +30,12 @@ main button a{
 .slider-text .sli-content {
     font-size: 80px;
     font-style: italic;
-    font-family: 'Allura';
-    line-height: 20px;
-    position: relative;
+    font-family: 'Allura', cursive; /* Add fallback */
+    line-height: 1.2; /* instead of 20px */
     color: #c4fb72;
     text-shadow: 2px 2px 5px #877a02;
 }
+
 
 .sli-btn {
     font-size: 3em;
@@ -326,22 +325,22 @@ ul {
             margin: 0 auto;
             max-width: 1200px;
         }
-        .card {
-            flex: 1 1 calc(33.333% - 20px);
-            max-width: calc(33.333% - 20px);
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-            text-align: center;
-        }
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 300px;
+    margin: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+    text-align: center;
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
         .card-body {
             padding: 15px;
         }
@@ -353,15 +352,6 @@ ul {
         .card p {
             margin: 5px 0;
             color: #555;
-        }
-        .book-now {
-            background-color: #007BFF;
-            color: #fff;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
         }
         .book-now:disabled {
             background-color: #ccc;
@@ -515,12 +505,30 @@ ul {
         .social-icons a:hover {
             color: #ffb400;
         }
-        @media (max-width: 768px) {
-            .footer-column {
-                width: 100%;
-                margin-bottom: 20px;
-            }
-        }
+@media (max-width: 768px) {
+    .menu {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mass {
+        flex-direction: column;
+    }
+
+    .hotel {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hotel img {
+        width: 100%;
+    }
+
+    .footer-column {
+        width: 100%;
+    }
+}
+
 /*  home jmg */
 header {
     text-align: center;
@@ -605,7 +613,7 @@ button .none {
 }
 
 
-.book-now  {
+.book-now {
     margin-top: 10px;
     padding: 10px 20px;
     background-color: #ffa500;
@@ -615,11 +623,13 @@ button .none {
     cursor: pointer;
     transition: background-color 0.3s;
     text-decoration: none;
+    font-weight: bold;
 }
 
 .book-now:hover {
     background-color: #ff8c00;
 }
+
 .hotel img {
     width: 550px; 
     height: auto; 
