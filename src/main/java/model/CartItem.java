@@ -51,4 +51,13 @@ public class CartItem {
         return room.getPrice() * quantity * numberOfDays;
     }
 
+    @Override
+    public String toString() {
+        return "CartItem{" +
+                "room=" + room +
+                ", checkIn=" + checkIn +
+                ", checkOut=" + checkOut +
+                ", quantity=" + quantity +
+                '}';
+    }
 }
