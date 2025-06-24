@@ -66,7 +66,7 @@
             <td><%= item.getRoom().getName() %></td>
             <td><span class="money price" data-price="<%= item.getRoom().getPrice() %>"><%= item.getRoom().getPrice() %></span>/đêm</td>
             <td>
-                <input type="date" name="checkIn" value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(item.getCheckIn()) %>" class="form-control checkIn" data-index="<%= i %>" required>
+                <input type="date" name="checkIn"  value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(item.getCheckIn()) %>" class="form-control checkIn" data-index="<%= i %>" required>
             </td>
             <td>
                 <input type="date" name="checkOut" value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(item.getCheckOut()) %>" class="form-control checkOut" data-index="<%= i %>" required>
@@ -146,6 +146,25 @@
     </div>
 </div>
 <script>
+    function setMinCheckout(row) {
+        const checkInInput = row.querySelector(".checkIn");
+        const checkOutInput = row.querySelector(".checkOut");
+
+        if (!checkInInput || !checkOutInput) return;
+
+        const inDate = new Date(checkInInput.value);
+        if (!isNaN(inDate)) {
+            inDate.setDate(inDate.getDate() + 1);
+            const minDateStr = inDate.toISOString().split("T")[0];
+            checkOutInput.min = minDateStr;
+
+            const currentOut = new Date(checkOutInput.value);
+            if (isNaN(currentOut) || currentOut <= new Date(checkInInput.value)) {
+                checkOutInput.value = minDateStr;
+            }
+        }
+    }
+
     // Tính số ngày giữa check-in và check-out
     function calcDays(checkIn, checkOut) {
         const inDate = new Date(checkIn);
@@ -226,19 +245,16 @@
             // Xử lý min ngày checkout khi chọn checkin
             const checkInInput = row.querySelector(".checkIn");
             const checkOutInput = row.querySelector(".checkOut");
+            const today = new Date().toISOString().split("T")[0];
+            checkInInput.setAttribute("min", today);
 
             if (checkInInput && checkOutInput) {
                 checkInInput.addEventListener("change", () => {
-                    const inDate = new Date(checkInInput.value);
-                    if (!isNaN(inDate)) {
-                        inDate.setDate(inDate.getDate() + 1);
-                        const minDate = inDate.toISOString().split("T")[0];
-                        checkOutInput.setAttribute("min", minDate);
-                        if (checkOutInput.value <= checkInInput.value) {
-                            checkOutInput.value = "";
-                        }
-                    }
+                    setMinCheckout(row);
+                    handleCartChange(row, index);
                 });
+                setMinCheckout(row);
+
 
                 if (checkInInput.value) {
                     const inDate = new Date(checkInInput.value);

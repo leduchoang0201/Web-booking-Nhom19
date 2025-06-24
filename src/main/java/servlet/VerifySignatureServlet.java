@@ -24,7 +24,7 @@ public class VerifySignatureServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("User");
+        model.User user = (model.User) session.getAttribute("User");
 
         // Kiểm tra đăng nhập
         if (user == null) {
@@ -73,6 +73,7 @@ public class VerifySignatureServlet extends HttpServlet {
             boolean isValid = rsa.verifyText(rawData, signatureBase64);
 
             if (isValid) {
+                // Tạo booking
                 BookingDAO bookingDAO = new BookingDAO();
                 RoomDAO roomDAO = new RoomDAO();
                 double totalPrice = 0;
