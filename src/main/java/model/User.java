@@ -11,6 +11,7 @@ public class User {
 	private String password;
 	private Date createdAt;
 	private int role;
+	private String publicKey;
 
 	public User(int id, String name, String email, String password, Date createdAt) {
 		this.id = id;
@@ -83,5 +84,11 @@ public class User {
 	public String toString() {
 		return id + "\t" + name + "\t" + email + "\t" + password + "\t" + createdAt + "\t" + role ;
 	}
+	public String getPublicKey() {
+		return publicKey;
+	}
 
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
+	}
 }
