@@ -144,6 +144,23 @@ public class UserDAO implements InterfaceDao<User> {
 	    }
 	    return 0; 
 	}
+	public int updateUserInfo(User user) {
+		try {
+			creatCon();
+			String sql = "UPDATE users SET name = ?, email = ? WHERE user_id = ?";
+			PreparedStatement pr = con.prepareStatement(sql);
+			pr.setString(1, user.getName());
+			pr.setString(2, user.getEmail());
+			pr.setInt(3, user.getId());
+			int result = pr.executeUpdate();
+			con.close();
+			return result;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 	public User findById(int id) {
 	    User user = null;
 	    try {
@@ -200,5 +217,57 @@ public class UserDAO implements InterfaceDao<User> {
 	    }
 	    return user;
 	}
+	public int insertPublicKey(int userId, String publicKey) {
+		try {
+			creatCon();
+			String sql = "UPDATE users SET public_key = ? WHERE user_id = ?";
+			PreparedStatement pr = con.prepareStatement(sql);
+			pr.setString(1, publicKey);
+			pr.setInt(2, userId);
+			int result = pr.executeUpdate();
+			con.close();
+			return result;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	public String getPublicKey(int userId) {
+		String publicKey = null;
+		try {
+			creatCon();
+			String sql = "SELECT public_key FROM users WHERE user_id = ?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, userId);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				publicKey = rs.getString("public_key");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (con != null) con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return publicKey;
+	}
+	public int deletePublicKey(int userId) {
+		try {
+			creatCon();
+			String sql = "UPDATE users SET public_key = NULL WHERE user_id = ?";
+			PreparedStatement pr = con.prepareStatement(sql);
+			pr.setInt(1, userId);
+			int result = pr.executeUpdate();
+			con.close();
+			return result;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 
 }

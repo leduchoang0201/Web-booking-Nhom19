@@ -11,5 +11,8 @@
         <module name="web-booking" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="web-booking" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
