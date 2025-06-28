@@ -17,8 +17,7 @@ public class OrderDAO implements InterfaceDao<Order> {
     public int insert(Order order) {
         try {
             creatCon();
-            String sql = "INSERT INTO orders (user_id, customer_name, customer_email, customer_phone, public_key, signature, total_price, time_stamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
+            String sql = "INSERT INTO orders (user_id, customer_name, customer_email, customer_phone, public_key, signature, total_price, time_stamp, hash_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pr = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pr.setInt(1, order.getUserId());
             pr.setString(2, order.getCustomerName());
@@ -27,7 +26,8 @@ public class OrderDAO implements InterfaceDao<Order> {
             pr.setString(5, order.getPublicKeyString());
             pr.setString(6, order.getSignature());
             pr.setDouble(7, order.getTotalPrice());
-            pr.setLong(8, order.getTimeStamp()); // ✅ Gán timestamp gốc
+            pr.setLong(8, order.getTimeStamp());
+            pr.setString(9, order.getHashData());
 
             int result = pr.executeUpdate();
 
@@ -66,6 +66,7 @@ public class OrderDAO implements InterfaceDao<Order> {
                 o.setSignature(rs.getString("signature"));
                 o.setTotalPrice(rs.getDouble("total_price"));
                 o.setTimeStamp(rs.getLong("time_stamp"));
+                o.setHashData(rs.getString("hash_data"));
                 list.add(o);
             }
             con.close();
@@ -94,6 +95,7 @@ public class OrderDAO implements InterfaceDao<Order> {
                 o.setSignature(rs.getString("signature"));
                 o.setTotalPrice(rs.getDouble("total_price"));
                 o.setTimeStamp(rs.getLong("time_stamp"));
+                o.setHashData(rs.getString("hash_data"));
                 list.add(o);
             }
             con.close();

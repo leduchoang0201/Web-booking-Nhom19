@@ -129,6 +129,18 @@
     }
 %>
 <div style="display: flex; max-width: 1200px; margin: 0 auto; padding: 30px; gap: 30px;">
+    <%
+        String message = (String) session.getAttribute("message");
+        if (message != null) {
+    %>
+    <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; margin-bottom: 30px; border-radius: 5px; width: 100%;">
+        <%= message %>
+    </div>
+    <%
+            session.removeAttribute("message");
+        }
+    %>
+
     <!-- Sidebar -->
     <div style="width: 250px; background-color: #fff; border-right: 1px solid #ddd; padding: 20px;">
         <div style="text-align: center; margin-bottom: 20px;">

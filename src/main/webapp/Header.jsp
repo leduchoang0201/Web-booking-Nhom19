@@ -62,93 +62,18 @@
         <a href="about.jsp">GIỚI THIỆU & LIÊN HỆ</a>
         <a href="cart"><i class="fa-solid fa-cart-shopping"></i> Giỏ Hàng</a>
         <%
-            User user = (User) request.getSession().getAttribute("User");
+            User user = (User) session.getAttribute("User");
+            Integer invalidOrderCount = (Integer) session.getAttribute("invalidOrderCount");
+            if (invalidOrderCount == null) invalidOrderCount = 0;
+
             if (user != null) {
-                int invalidOrderCount = 0;
-                StringBuilder debugMessage = new StringBuilder("Debug: ");
-                try {
-                    OrderDAO orderDAO = new OrderDAO();
-                    BookingDAO bookingDAO = new BookingDAO();
-                    RoomDAO roomDAO = new RoomDAO();
-                    List<Order> orders = orderDAO.getAllByUser(user);
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    DecimalFormat df = new DecimalFormat("#,###");
-
-                    if (orders == null || orders.isEmpty()) {
-                        debugMessage.append("No orders found for user: ").append(user.getName());
-                    } else {
-                        debugMessage.append("Found ").append(orders.size()).append(" orders for user: ").append(user.getName());
-                        for (Order order : orders) {
-                            List<Booking> bookings = bookingDAO.getByOrderId(order.getOrderId());
-                            if (bookings == null || bookings.isEmpty()) {
-                                debugMessage.append("; No bookings for order ID: ").append(order.getOrderId());
-                                continue;
-                            }
-                            List<Room> rooms = new ArrayList<>();
-                            for (Booking b : bookings) {
-                                Room room = roomDAO.getRoomById(b.getRoomId());
-                                if (room != null) {
-                                    rooms.add(room);
-                                } else {
-                                    debugMessage.append("; Room not found for booking ID: ").append(b.getRoomId());
-                                }
-                            }
-                            if (rooms.size() != bookings.size()) {
-                                debugMessage.append("; Mismatch: ").append(bookings.size()).append(" bookings but ").append(rooms.size()).append(" rooms for order ID: ").append(order.getOrderId());
-                                continue;
-                            }
-
-                            StringBuilder rawData = new StringBuilder();
-                            rawData.append("Tên: ").append(order.getCustomerName()).append("\n");
-                            rawData.append("Email: ").append(order.getCustomerEmail()).append("\n");
-                            rawData.append("SĐT: ").append(order.getCustomerPhone()).append("\n");
-                            rawData.append("Tổng tiền: ").append(df.format(order.getTotalPrice())).append("\n\n");
-
-                            int index = 1;
-                            for (int i = 0; i < bookings.size(); i++) {
-                                Booking b = bookings.get(i);
-                                Room r = rooms.get(i);
-                                rawData.append("Phòng ").append(index++).append(":\n");
-                                rawData.append("- Tên phòng: ").append(r.getName()).append("\n");
-                                rawData.append("- Giá: ").append(df.format(r.getPrice())).append("\n");
-                                rawData.append("- Check-in: ").append(sdf.format(b.getCheckIn())).append("\n");
-                                rawData.append("- Check-out: ").append(sdf.format(b.getCheckOut())).append("\n");
-                                rawData.append("- Số lượng: ").append(b.getQuantity()).append("\n");
-                                rawData.append("- Thành tiền: ").append(df.format(b.getQuantity() * r.getPrice())).append("\n\n");
-                            }
-
-                            rawData.append("Timestamp: ").append(order.getTimeStamp());
-
-                            try {
-                                RSAModel rsa = new RSAModel();
-                                String publicKey = order.getPublicKeyString();
-                                String signature = order.getSignature();
-                                if (publicKey == null || signature == null) {
-                                    debugMessage.append("; Null public key or signature for order ID: ").append(order.getOrderId());
-                                    invalidOrderCount++;
-                                    continue;
-                                }
-                                rsa.loadPublicKeyFromBase64(publicKey);
-                                boolean isValid = rsa.verifyText(rawData.toString(), signature);
-                                debugMessage.append("; Order ID ").append(order.getOrderId()).append(isValid ? " is valid" : " is invalid");
-                                if (!isValid) {
-                                    invalidOrderCount++;
-                                }
-                            } catch (Exception e) {
-                                debugMessage.append("; RSA verification failed for order ID ").append(order.getOrderId()).append(": ").append(e.getMessage());
-                                invalidOrderCount++;
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    debugMessage.append("Error calculating invalid orders: ").append(e.getMessage());
-                    e.printStackTrace();
-                }
         %>
-        <a href="verify-orders?filter=invalid" class="notification-icon" data-bs-toggle="tooltip" title="Thông báo: <%= invalidOrderCount %> đơn hàng không hợp lệ">
+        <a href="verify-orders?filter=invalid" class="notification-icon" data-bs-toggle="tooltip"
+           title="Thông báo: <%= invalidOrderCount %> đơn hàng không hợp lệ">
             <i class="fa-solid fa-bell"></i>
             <span class="notification-badge"><%= invalidOrderCount %></span>
         </a>
+
         <div class="dropdown d-inline-block">
             <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button">
                 <i class="fa-solid fa-user"></i> <%= user.getName() %>
@@ -160,9 +85,13 @@
                 <li><a class="dropdown-item text-danger" href="logout"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Đăng xuất</a></li>
             </ul>
         </div>
-        <% } else { %>
+        <%
+        } else {
+        %>
         <a href="login.jsp"><i class="fa-solid fa-magnifying-glass"></i> Đăng Nhập/Đăng Kí</a>
-        <% } %>
+        <%
+            }
+        %>
     </nav>
 </header>
 <script>

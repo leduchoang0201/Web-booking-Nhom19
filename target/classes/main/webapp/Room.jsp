@@ -345,6 +345,7 @@
                             data-room-id="<%= room.getId() %>"
                             data-room-name="<%= room.getName() %>"
                             data-room-price="<%= room.getPrice() %>"
+                            data-available="<%= room.getQuantity() %>"
                             data-user-id="<%= user.getId() %>">Đặt Ngay</button>
                     <% } else { %>
                     <!-- Người dùng chưa đăng nhập -->
@@ -480,6 +481,7 @@
             const roomName = button.getAttribute('data-room-name');
             const roomPrice = parseFloat(button.getAttribute('data-room-price'));
             const userId = button.getAttribute('data-user-id');
+            const availableQty = parseInt(button.getAttribute('data-available'));
 
             roomIdInput.value = roomId;
             roomNameInput.value = roomName;
@@ -487,6 +489,8 @@
             userIdInput.value = userId;
 
             quantityInput.value = 1;
+            quantityInput.max = availableQty;
+            quantityInput.setAttribute('max', availableQty);
             totalPriceInput.value = roomPrice;
 
             modal.show();

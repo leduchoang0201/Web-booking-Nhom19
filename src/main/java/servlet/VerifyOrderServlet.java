@@ -5,6 +5,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.*;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -21,6 +23,12 @@ public class VerifyOrderServlet extends HttpServlet {
             return;
         }
 
+        String message = (String) session.getAttribute("message");
+        if (message != null) {
+            request.setAttribute("message", message);
+            session.removeAttribute("message");
+        }
+
         OrderDAO orderDAO = new OrderDAO();
         BookingDAO bookingDAO = new BookingDAO();
         RoomDAO roomDAO = new RoomDAO();
@@ -28,6 +36,7 @@ public class VerifyOrderServlet extends HttpServlet {
         List<Order> orders = orderDAO.getAllByUser(user);
         Collections.reverse(orders);
         Map<Integer, Boolean> verificationMap = new HashMap<>();
+        int invalidOrderCount = 0;
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         DecimalFormat df = new DecimalFormat("#,###");
@@ -62,15 +71,41 @@ public class VerifyOrderServlet extends HttpServlet {
 
                 rawData.append("Timestamp: ").append(order.getTimeStamp());
 
+                // Xác minh chữ ký đúng với rawData
                 RSAModel rsa = new RSAModel();
                 rsa.loadPublicKeyFromBase64(order.getPublicKeyString());
-                boolean isValid = rsa.verifyText(rawData.toString(), order.getSignature());
-                verificationMap.put(order.getOrderId(), isValid);
+                boolean isSignatureValid = rsa.verifyText(rawData.toString(), order.getSignature());
+
+                // Kiểm tra tính toàn vẹn dữ liệu bằng hash (rawData + "HNH")
+                String hashInput = rawData + "HNH";
+                String actualHash = order.getHashData();
+
+                String computedHash;
+                try {
+                    MessageDigest md = MessageDigest.getInstance("SHA-256");
+                    byte[] digest = md.digest(hashInput.getBytes(StandardCharsets.UTF_8));
+                    StringBuilder sb = new StringBuilder();
+                    for (byte b : digest) {
+                        sb.append(String.format("%02x", b));
+                    }
+                    computedHash = sb.toString();
+                } catch (Exception e) {
+                    computedHash = ""; // Lỗi khi tính hash
+                }
+
+                boolean isHashMatch = computedHash.equalsIgnoreCase(actualHash);
+                boolean isValid = isSignatureValid && isHashMatch;
+
+                //  Nếu cả chữ ký hợp lệ và hash đúng → hợp lệ
+                verificationMap.put(order.getOrderId(), isSignatureValid && isHashMatch);
+                if (!isValid) invalidOrderCount++;
             } catch (Exception e) {
                 e.printStackTrace();
                 verificationMap.put(order.getOrderId(), false);
+                invalidOrderCount++;
             }
         }
+        session.setAttribute("invalidOrderCount", invalidOrderCount);
 
         request.setAttribute("orders", orders);
         request.setAttribute("verificationMap", verificationMap);
