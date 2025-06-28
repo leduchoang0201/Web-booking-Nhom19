@@ -11,6 +11,7 @@ public class Order {
     private String signature;
     private long timeStamp;
     private double totalPrice;
+    private String hashData;
 
     public int getOrderId() {
         return orderId;
@@ -71,5 +72,11 @@ public class Order {
     }
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+    public String getHashData() {
+        return hashData;
+    }
+    public void setHashData(String hashData) {
+        this.hashData = hashData;
     }
 }
