@@ -3,6 +3,9 @@
 <%@ page import="java.util.List"%>
 <%@ page import="model.*"%>
 <%@ page import="dao.*"%>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.TreeMap" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -22,185 +25,348 @@
     <p class="me-3">Chào mừng admin</p>
     <a href="logout" class="btn btn-danger btn-sm">Đăng xuất</a>
 </div>
+<ul class="nav nav-tabs" id="adminTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="rooms-tab" data-bs-toggle="tab" data-bs-target="#rooms" type="button" role="tab">Phòng</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">Người dùng</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">Đơn hàng</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="revenue-tab" data-bs-toggle="tab" data-bs-target="#revenue" type="button" role="tab">Doanh thu</button>
+    </li>
 
-<!-- Room Management -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Danh sách phòng</h2>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">Thêm Phòng Mới</button>
+</ul>
+<%
+    String message = (String) session.getAttribute("message");
+    if (message != null) {
+%>
+<div class="alert alert-success alert-dismissible fade show mt-3 mx-3" role="alert">
+    <%= message %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
+<%
+        session.removeAttribute("message");
+    }
+%>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Tên phòng</th>
-            <th>Loại</th>
-            <th>Giá</th>
-            <th>Số người</th>
-            <th>Số phòng</th>
-            <th>Có sẵn</th>
-            <th>Ảnh</th>
-            <th>Địa điểm</th>
-            <th>Hành Động</th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="tab-content" id="adminTabContent">
+    <!-- Room Management -->
+    <div class="tab-pane fade show active" id="rooms" role="tabpanel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Danh sách phòng</h2>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">Thêm Phòng Mới</button>
+        </div>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên phòng</th>
+                    <th>Loại</th>
+                    <th>Giá</th>
+                    <th>Số người</th>
+                    <th>Số phòng</th>
+                    <th>Có sẵn</th>
+                    <th>Ảnh</th>
+                    <th>Địa điểm</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                List<Room> rooms = (List<Room>) request.getAttribute("rooms");
+                if (rooms != null) {
+                    for (Room room : rooms) {
+                %>
+                <tr>
+                    <td><%= room.getId() %></td>
+                    <td><%= room.getName() %></td>
+                    <td><%= room.getType() %></td>
+                    <td><%= room.getPrice() %></td>
+                    <td><%= room.getCapacity() %></td>
+                    <td><%= room.getQuantity() %></td>
+                    <td><%= room.isAvailable() ? "Có" : "Không" %></td>
+                    <td><%= room.getImage() %></td>
+                    <td><%= room.getLocation() %></td>
+                    <td>
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateRoomModal"
+                        data-id="<%= room.getId() %>" data-name="<%= room.getName() %>" data-type="<%= room.getType() %>"
+                        data-price="<%= room.getPrice() %>" data-capacity="<%= room.getCapacity() %>" data-image="<%= room.getImage() %>"
+                        data-location="<%= room.getLocation() %>">Cập Nhật</button>
+                        <form action="roomAdmin" method="POST" style="display:inline;">
+                            <button type="submit" name="action" value="delete" class="btn btn-danger">Xóa</button>
+                            <input type="hidden" name="roomId" value="<%= room.getId() %>" />
+                        </form>
+                    </td>
+                </tr>
+                <%
+                }
+                } else {
+                %>
+                <tr>
+                    <td colspan="9" class="text-center">Không có phòng nào</td>
+                </tr>
+                <%
+                }
+                %>
+            </tbody>
+        </table>
+    </div>
+    <!-- Order Management -->
+    <div class="tab-pane fade" id="orders" role="tabpanel">
+        <h2 class="mt-3">Danh sách đơn hàng</h2>
+        <table class="table table-bordered mt-3">
+            <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Người đặt</th>
+                <th>Email</th>
+                <th>Điện thoại</th>
+                <th>Tổng tiền</th>
+                <th>Ngày đặt phòng</th>
+                <th>Chi tiết</th>
+            </tr>
+            </thead>
+            <tbody>
+            <%
+                List<Order> orders = (List<Order>) request.getAttribute("orders");
+                BookingDAO bookingDAO = new BookingDAO();
+                RoomDAO roomDAO = new RoomDAO();
+                if (orders != null) {
+                    for (Order o : orders) {
+            %>
+            <tr>
+                <td><%= o.getOrderId() %></td>
+                <td><%= o.getCustomerName() %></td>
+                <td><%= o.getCustomerEmail() %></td>
+                <td><%= o.getCustomerPhone() %></td>
+                <td><%= o.getTotalPrice() %> VNĐ</td>
+                <td><%= new java.util.Date(o.getTimeStamp()) %></td>
+                <td>
+                    <button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#orderDetails<%= o.getOrderId() %>">
+                        Xem Booking
+                    </button>
+                </td>
+            </tr>
+            <tr class="collapse" id="orderDetails<%= o.getOrderId() %>">
+                <td colspan="7">
+                    <strong>Booking:</strong>
+                    <table class="table table-sm table-bordered mt-2">
+                        <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>ID phòng</th>
+                            <th>Phòng</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Số lượng</th>
+                            <th>Trạng thái</th>
+                            <th>Hành Động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <%
+                            List<Booking> bookings = bookingDAO.getByOrderId(o.getOrderId());
+                            for (Booking b : bookings) {
+                                Room r = roomDAO.getRoomById(b.getRoomId());
+                        %>
+                        <tr>
+                            <td><%= b.getBookingId() %></td>
+                            <td><%= r.getId() %></td>
+                            <td><%= r != null ? r.getName() : "Phòng đã xoá" %></td>
+                            <td><%= b.getCheckIn() %></td>
+                            <td><%= b.getCheckOut() %></td>
+                            <td><%= b.getQuantity() %></td>
+                            <td><%= b.getStatus() %></td>
+                            <td>
+                                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateBookingModal"
+                                        data-id="<%= b.getBookingId() %>"
+                                        data-check-out="<%= b.getCheckOut() %>"
+                                        data-status="<%= b.getStatus() %>">Cập Nhật</button>
+
+                                <form action="bookingAdmin" method="POST" style="display:inline;">
+                                    <button type="submit" name="action" value="delete" class="btn btn-danger">Xóa</button>
+                                    <input type="hidden" name="bookingId" value="<%= b.getBookingId() %>" />
+                                </form>
+                            </td>
+                        </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <%
+                }
+            } else {
+            %>
+            <tr><td colspan="7" class="text-center">Không có đơn hàng nào</td></tr>
+            <%
+                }
+            %>
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- User Management -->
+    <div class="tab-pane fade" id="users" role="tabpanel">
+        <h2 class="mt-3">Danh sách người dùng</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên người dùng</th>
+                    <th>Email</th>
+                    <th>Ngày tạo</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                List<User> users = (List<User>) request.getAttribute("users");
+                if (users != null) {
+                    for (User user : users) {
+                %>
+                <tr>
+                    <td><%= user.getId() %></td>
+                    <td><%= user.getName() %></td>
+                    <td><%= user.getEmail() %></td>
+                    <td><%=user.getCreatedAt()%></td>
+                    <td>
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateUserModal"
+                                data-id="<%=user.getId()%>"
+                                data-name="<%=user.getName()%>"
+                                data-email="<%=user.getEmail()%>"
+                                data-created-at="<%= user.getCreatedAt() %>">Cập Nhật</button>
+
+                        <form action="userAdmin" method="POST" style="display:inline;">
+                            <button type="submit" name="action" value="delete" class="btn btn-danger">Xóa</button>
+                            <input type="hidden" name="userId" value="<%= user.getId() %>" />
+                        </form>
+                    </td>
+                </tr>
+                <%
+                    }
+                } else {
+                %>
+                <tr>
+                    <td colspan="6" class="text-center">Không có người dùng nào</td>
+                </tr>
+                <%
+                }
+                %>
+            </tbody>
+        </table>
+    </div>
+    <!-- Revenue Management -->
+    <div class="tab-pane fade" id="revenue" role="tabpanel">
         <%
-        List<Room> rooms = (List<Room>) request.getAttribute("rooms");
-        if (rooms != null) {
-            for (Room room : rooms) {
-        %>
-        <tr>
-            <td><%= room.getId() %></td>
-            <td><%= room.getName() %></td>
-            <td><%= room.getType() %></td>
-            <td><%= room.getPrice() %></td>
-            <td><%= room.getCapacity() %></td>
-            <td><%= room.getQuantity() %></td>
-            <td><%= room.isAvailable() ? "Có" : "Không" %></td>
-            <td><%= room.getImage() %></td>
-            <td><%= room.getLocation() %></td>
-            <td>
-                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateRoomModal" 
-                data-id="<%= room.getId() %>" data-name="<%= room.getName() %>" data-type="<%= room.getType() %>" 
-                data-price="<%= room.getPrice() %>" data-capacity="<%= room.getCapacity() %>" data-image="<%= room.getImage() %>" 
-                data-location="<%= room.getLocation() %>">Cập Nhật</button>
-                <form action="roomAdmin" method="POST" style="display:inline;">
-                    <button type="submit" name="action" value="delete" class="btn btn-danger">Xóa</button>
-                    <input type="hidden" name="roomId" value="<%= room.getId() %>" />
-                </form>
-            </td>
-        </tr>
-        <%
-        }
-        } else {
-        %>
-        <tr>
-            <td colspan="9" class="text-center">Không có phòng nào</td>
-        </tr>
-        <%
-        }
-        %>
-    </tbody>
-</table>
+            orders = (List<Order>) request.getAttribute("orders");
+            bookingDAO = new BookingDAO();
+            UserDAO userDAO = new UserDAO();
 
-<!-- Booking Management -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Danh sách lịch đặt</h2>
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addBookingModal">Thêm Lịch Đặt Mới</button>
-</div>
+            double totalRevenue = 0;
+            int totalBookings = 0;
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>ID người đặt</th>
-            <th>ID phòng</th>
-            <th>Ngày nhận phòng</th>
-            <th>Ngày đi</th>
-            <th>Trạng thái</th>
-            <th>Đặt vào ngày</th>
-            <th>Hành Động</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% 
-        List<Booking> bookings = (List<Booking>) request.getAttribute("bookings");
-        if (bookings != null) {
-            for (Booking booking : bookings) {
-        %>
-        <tr>
-            <td><%= booking.getBookingId() %></td>
-            <td><%= booking.getUserId() %></td>
-            <td><%= booking.getRoomId() %></td>
-            <td><%= booking.getCheckIn() %></td>
-            <td><%= booking.getCheckOut() %></td>
-            <td><%= booking.getStatus() %></td>
-            <td><%= booking.getCreatedAt() %></td>
-            <td>
-                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateBookingModal" 
-			    data-id="<%= booking.getBookingId() %>" 
-			    data-user-id="<%= booking.getUserId() %>" 
-			    data-room-id="<%= booking.getRoomId() %>" 
-			    data-check-in="<%= booking.getCheckIn() %>" 
-			    data-check-out="<%= booking.getCheckOut() %>" 
-			    data-status="<%= booking.getStatus() %>">Cập Nhật</button>
+            Map<Integer, Integer> bookingCountByUser = new HashMap<>();
+            Map<String, Double> revenueByMonth = new TreeMap<>();
 
-                <form action="bookingAdmin" method="POST" style="display:inline;">
-                    <button type="submit" name="action" value="delete" class="btn btn-danger">Xóa</button>
-                    <input type="hidden" name="bookingId" value="<%= booking.getBookingId() %>" />
-                </form>
-            </td>
-        </tr>
-        <%
-        }
-        } else {
-        %>
-        <tr>
-            <td colspan="8" class="text-center">Không có lịch đặt nào</td>
-        </tr>
-        <%
-        }
-        %>
-    </tbody>
-</table>
+            if (orders != null) {
+                for (Order order : orders) {
+                    totalRevenue += order.getTotalPrice();
 
-<!-- User Management -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Danh sách người dùng</h2>
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">Thêm Người Dùng Mới</button>
-</div>
+                    List<Booking> bookings = bookingDAO.getByOrderId(order.getOrderId());
+                    totalBookings += bookings.size();
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Tên người dùng</th>
-            <th>Email</th>
-            <th>Mật khẩu</th>
-            <th>Ngày tạo</th>
-            <th>Hành Động</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% 
-        List<User> users = (List<User>) request.getAttribute("users");
-        if (users != null) {
-            for (User user : users) {
-        %>
-        <tr>
-            <td><%= user.getId() %></td>
-            <td><%= user.getName() %></td>
-            <td><%= user.getEmail() %></td>
-            <td><%=user.getPassword()%></td>
-            <td><%=user.getCreatedAt()%></td>
-            <td>
-                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateUserModal" 
-                        data-id="<%=user.getId()%>" 
-                        data-name="<%=user.getName()%>" 
-                        data-email="<%=user.getEmail()%>" 
-                        data-password="<%=user.getPassword()%>" 
-                        data-created-at="<%= user.getCreatedAt() %>">Cập Nhật</button>
+                    // Đếm số lần đặt theo user
+                    int userId = order.getUserId();
+                    bookingCountByUser.put(userId, bookingCountByUser.getOrDefault(userId, 0) + bookings.size());
 
-                <form action="userAdmin" method="POST" style="display:inline;">
-                    <button type="submit" name="action" value="delete" class="btn btn-danger">Xóa</button>
-                    <input type="hidden" name="userId" value="<%= user.getId() %>" />
-                </form>
-            </td>
-        </tr>
-        <%
+                    // Tính doanh thu theo tháng
+                    java.util.Date orderDate = new java.util.Date(order.getTimeStamp());
+                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MM/yyyy");
+                    String monthKey = sdf.format(orderDate);
+
+                    revenueByMonth.put(monthKey, revenueByMonth.getOrDefault(monthKey, 0.0) + order.getTotalPrice());
+                }
             }
-        } else {
+
+            // Người đặt nhiều nhất
+            int topUserId = -1;
+            int maxBookings = 0;
+            for (Map.Entry<Integer, Integer> entry : bookingCountByUser.entrySet()) {
+                if (entry.getValue() > maxBookings) {
+                    maxBookings = entry.getValue();
+                    topUserId = entry.getKey();
+                }
+            }
+            User topUser = (topUserId != -1) ? userDAO.getUserById(topUserId) : null;
         %>
-        <tr>
-            <td colspan="6" class="text-center">Không có người dùng nào</td>
-        </tr>
-        <%
-        }
-        %>
-    </tbody>
-</table>
-<!-- Modal Thêm Phòng -->
+
+        <div class="my-3">
+            <h2>Thống kê doanh thu</h2>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Tổng doanh thu</h5>
+                        <p class="card-text fs-4"><%= String.format("%,.0f", totalRevenue) %> VNĐ</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Tổng lượt đặt</h5>
+                        <p class="card-text fs-4"><%= totalBookings %> lượt</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Người đặt nhiều nhất</h5>
+                        <p class="card-text fs-6">
+                            <% if (topUser != null) { %>
+                            <strong><%= topUser.getName() %> -  <%=topUser.getEmail()%> </strong><br/>
+
+                            <%= maxBookings %> lượt đặt
+                            <% } else { %>
+                            Không có dữ liệu
+                            <% } %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng doanh thu theo tháng -->
+        <h4 class="mt-4">Doanh thu theo tháng</h4>
+        <table class="table table-bordered table-hover">
+            <thead class="table-primary">
+            <tr>
+                <th>Tháng</th>
+                <th>Doanh thu (VNĐ)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (Map.Entry<String, Double> entry : revenueByMonth.entrySet()) { %>
+            <tr>
+                <td><%= entry.getKey() %></td>
+                <td><%= String.format("%,.0f", entry.getValue()) %></td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal Thêm Phòng -->
 <div class="modal fade" id="addRoomModal" tabindex="-1" aria-labelledby="addRoomModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -310,40 +476,6 @@ updateRoomModal.addEventListener('show.bs.modal', function(event) {
     document.getElementById('updateRoomLocation').value = roomLocation;
 });
 </script>
-
-<!-- Modal Thêm Lịch Đặt -->
-<div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addBookingModalLabel">Thêm Lịch Đặt Mới</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="bookingAdmin" method="POST" accept-charset="UTF-8">
-                    <div class="mb-3">
-                        <label for="bookingUserId" class="form-label">ID người đặt</label>
-                        <input type="number" class="form-control" id="bookingUserId" name="userId" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="bookingRoomId" class="form-label">ID phòng</label>
-                        <input type="number" class="form-control" id="bookingRoomId" name="roomId" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="bookingCheckIn" class="form-label">Ngày nhận phòng</label>
-                        <input type="date" class="form-control" id="bookingCheckIn" name="checkinDate" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="bookingCheckOut" class="form-label">Ngày đi</label>
-                        <input type="date" class="form-control" id="bookingCheckOut" name="checkoutDate" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" name="action" value="insert">Xác nhận thêm lịch đặt</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Modal Cập Nhật Lịch Đặt -->
 <div class="modal fade" id="updateBookingModal" tabindex="-1" aria-labelledby="updateBookingModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -356,27 +488,15 @@ updateRoomModal.addEventListener('show.bs.modal', function(event) {
                 <form action="bookingAdmin" method="POST">
                     <input type="hidden" id="updateBookingId" name="bookingId">
                     <div class="mb-3">
-                        <label for="updateBookingUserId" class="form-label">ID người đặt</label>
-                        <input type="number" class="form-control" id="updateBookingUserId" name="userId" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="updateBookingRoomId" class="form-label">ID phòng</label>
-                        <input type="number" class="form-control" id="updateBookingRoomId" name="roomId" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="updateBookingCheckIn" class="form-label">Ngày nhận phòng</label>
-                        <input type="date" class="form-control" id="updateBookingCheckIn" name="checkinDate" required>
-                    </div>
-                    <div class="mb-3">
                         <label for="updateBookingCheckOut" class="form-label">Ngày đi</label>
                         <input type="date" class="form-control" id="updateBookingCheckOut" name="checkoutDate" required>
                     </div>
                     <div class="mb-3">
                         <label for="updateBookingStatus" class="form-label">Trạng thái</label>
-                        <select class="form-control" id="updateBookingStatus" name="status" required>   
-                            <option value="Confirmed">Confirmed</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="Check_out">Check out</option>
+                        <select class="form-control" id="updateBookingStatus" name="status" required>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="checked_out">Checked out</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary" name="action" value="update">Cập nhật lịch đặt</button>
@@ -391,48 +511,14 @@ var updateBookingModal = document.getElementById('updateBookingModal');
 updateBookingModal.addEventListener('show.bs.modal', function(event) {
     var button = event.relatedTarget;
     var bookingId = button.getAttribute('data-id');
-    var userId = button.getAttribute('data-user-id');
-    var roomId = button.getAttribute('data-room-id');
-    var checkIn = button.getAttribute('data-check-in');
     var checkOut = button.getAttribute('data-check-out');
     var status = button.getAttribute('data-status');
 
     document.getElementById('updateBookingId').value = bookingId;
-    document.getElementById('updateBookingUserId').value = userId;
-    document.getElementById('updateBookingRoomId').value = roomId;
-    document.getElementById('updateBookingCheckIn').value = checkIn;
     document.getElementById('updateBookingCheckOut').value = checkOut;
     document.getElementById('updateBookingStatus').value = status;
 });
 </script>
-<!-- Modal Thêm Người Dùng -->
-<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addUserModalLabel">Thêm Người Dùng Mới</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="userAdmin" method="POST" accept-charset="UTF-8">
-                    <div class="mb-3">
-                        <label for="userName" class="form-label">Tên người dùng</label>
-                        <input type="text" class="form-control" id="userName" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="userEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="userEmail" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="userPassword" class="form-label">Mật khẩu</label>
-                        <input type="password" class="form-control" id="userPassword" name="password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" name="action" value="insert">Thêm người dùng</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- Modal Cập Nhật Người Dùng -->
 <div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="updateUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -452,14 +538,6 @@ updateBookingModal.addEventListener('show.bs.modal', function(event) {
                         <label for="updateUserEmail" class="form-label">Email</label>
                         <input type="email" class="form-control" id="updateUserEmail" name="email" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="updateUserPassword" class="form-label">Mật khẩu</label>
-                        <input type="password" class="form-control" id="updateUserPassword" name="password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="updateUserCreatedAt" class="form-label">Ngày tạo</label>
-                        <input type="text" class="form-control" id="updateUserCreatedAt" name="createdAt" readonly>
-                    </div>
                     <button type="submit" class="btn btn-primary" name="action" value="update">Cập nhật người dùng</button>
                 </form>
             </div>
@@ -473,16 +551,12 @@ updateUserModal.addEventListener('show.bs.modal', function(event) {
     var userId = button.getAttribute('data-id');
     var userName = button.getAttribute('data-name');
     var userEmail = button.getAttribute('data-email');
-    var userPassword = button.getAttribute('data-password');
-    var userCreatedAt = button.getAttribute('data-created-at');
 
     document.getElementById('updateUserId').value = userId;
     document.getElementById('updateUserName').value = userName;
     document.getElementById('updateUserEmail').value = userEmail;
-    document.getElementById('updateUserPassword').value = userPassword;
-    document.getElementById('updateUserCreatedAt').value = userCreatedAt;
 });
 </script>
-
+</div>
 </body>
 </html>

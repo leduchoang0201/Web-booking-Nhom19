@@ -54,9 +54,14 @@ public class AdminServlet extends HttpServlet {
         UserDAO userDAO = new UserDAO();
         List<User> users = userDAO.getAll();
 
+        OrderDAO orderDAO = new OrderDAO();
+        List<Order> orders = orderDAO.getAll();
+
         request.setAttribute("rooms", rooms);
         request.setAttribute("bookings", bookings);
         request.setAttribute("users", users);
+        request.setAttribute("orders", orders);
+
         request.setAttribute("adminName", adminUser.getName());
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("/admin.jsp");
