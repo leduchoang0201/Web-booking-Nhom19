@@ -72,7 +72,7 @@
                 <input type="date" name="checkOut" value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(item.getCheckOut()) %>" class="form-control checkOut" data-index="<%= i %>" required>
             </td>
             <td>
-                <input type="number" name="quantity" value="<%= item.getQuantity() %>" min="1" class="form-control quantity" data-index="<%= i %>" data-price="<%= item.getRoom().getPrice() %>" required>
+                <input type="number" name="quantity" value="<%= item.getQuantity() %>" min="1" max="<%= item.getRoom().getQuantity() %>" class="form-control quantity" data-index="<%= i %>" data-price="<%= item.getRoom().getPrice() %>" required>
             </td>
             <td>
                 <span class="money subtotal"
@@ -267,6 +267,18 @@
         updateSubtotals()
         updateTotal();
     });
+    const quantities = document.querySelectorAll("input.quantity");
+    quantities.forEach(input => {
+        input.addEventListener("input", () => {
+            const max = parseInt(input.max);
+            const val = parseInt(input.value);
+            if (val > max) {
+                alert("Bạn không thể đặt nhiều hơn số phòng còn lại.");
+                input.value = max;
+            }
+        });
+    });
+
 </script>
 
 

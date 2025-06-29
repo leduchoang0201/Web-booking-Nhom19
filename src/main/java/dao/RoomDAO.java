@@ -158,21 +158,6 @@ public class RoomDAO implements InterfaceDao<Room> {
 	    }
 	    return room;
 	}
-	public boolean updateRoomAvailability(int roomId, int availability) {
-        try  {
-        	creatCon();
-        	String sql = "UPDATE rooms SET status = ? WHERE room_id = ?";
-        	PreparedStatement pr = con.prepareStatement(sql);
-            pr.setInt(1, availability);  
-            pr.setInt(2, roomId);            
-            int rowsUpdated = pr.executeUpdate();
-            con.close();
-            return rowsUpdated > 0;  
-        } catch (SQLException e) {
-            e.printStackTrace();  
-            return false;  
-        }
-    }
 	public List<Room> getRoomsByLocation(String location) {
 	    List<Room> rooms = new ArrayList<>();
 	    try {
@@ -202,10 +187,28 @@ public class RoomDAO implements InterfaceDao<Room> {
 	    }
 	    return rooms;
 	}
-	public static void main(String[] args) {
-		RoomDAO rDAO = new RoomDAO();
-		for (Room r : rDAO.getRoomsByLocation("Phú Quốc")) {
-			System.out.println(r);
+	public void reduceRoomQuantity(int roomId, int quantity) throws SQLException {
+		creatCon();
+		String sql = "UPDATE rooms SET quantity = quantity - ? WHERE room_id = ? AND quantity >= ?";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1, quantity);
+		ps.setInt(2, roomId);
+		ps.setInt(3, quantity); // đảm bảo không trừ khi không đủ
+		ps.executeUpdate();
+		con.close();
+	}
+	public int getAvailableQuantity(int roomId) throws SQLException {
+		creatCon();
+		String sql = "SELECT quantity FROM rooms WHERE room_id = ?";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1, roomId);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			int qty = rs.getInt("quantity");
+			con.close();
+			return qty;
 		}
+		con.close();
+		return 0;
 	}
 }

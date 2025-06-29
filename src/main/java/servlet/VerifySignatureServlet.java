@@ -73,6 +73,14 @@ public class VerifySignatureServlet extends HttpServlet {
             boolean isValid = rsa.verifyText(rawData, signatureBase64);
 
             if (isValid) {
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                byte[] hashBytes = digest.digest((rawData + "HNH").getBytes(StandardCharsets.UTF_8));
+                StringBuilder sb = new StringBuilder();
+                for (byte b : hashBytes) {
+                    sb.append(String.format("%02x", b));
+                }
+                String hashData = sb.toString();
+
                 // Tạo booking
                 BookingDAO bookingDAO = new BookingDAO();
                 RoomDAO roomDAO = new RoomDAO();
@@ -92,6 +100,7 @@ public class VerifySignatureServlet extends HttpServlet {
                         int bookingId = bookingDAO.insertAndReturnId(booking);
                         if (bookingId > 0) {
                             bookingIds.add(bookingId);
+                            roomDAO.reduceRoomQuantity(item.getRoom().getId(), item.getQuantity());
                         }
                     }
                 }
@@ -112,7 +121,7 @@ public class VerifySignatureServlet extends HttpServlet {
                 order.setSignature(signatureBase64);
                 order.setTotalPrice(totalPrice);
                 order.setTimeStamp(timestamp);
-
+                order.setHashData(hashData);
                 OrderDAO orderDAO = new OrderDAO();
                 int orderId = orderDAO.insert(order);
 

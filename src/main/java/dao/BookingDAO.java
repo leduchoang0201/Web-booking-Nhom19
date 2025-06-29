@@ -82,7 +82,8 @@ public class BookingDAO implements InterfaceDao<Booking>{
 	            b.setCheckIn(rs.getDate("check_in"));    
 	            b.setCheckOut(rs.getDate("check_out"));  
 	            b.setStatus(rs.getString("status"));     
-	            b.setCreatedAt(rs.getTimestamp("created_at")); 
+	            b.setCreatedAt(rs.getTimestamp("created_at"));
+				b.setOrderId(rs.getInt("order_id"));
 	            list.add(b);
 	        }
 	        con.close();
@@ -131,6 +132,33 @@ public class BookingDAO implements InterfaceDao<Booking>{
 	    }
 	    return 0;
 	}
+	public Booking getBookingById(int bookingId) {
+		Booking b = null;
+		try {
+			creatCon(); // hoặc: Connection con = new ConnectDB().getConnection();
+			String sql = "SELECT * FROM bookings WHERE booking_id = ?";
+			PreparedStatement pr = con.prepareStatement(sql);
+			pr.setInt(1, bookingId);
+			ResultSet rs = pr.executeQuery();
+			if (rs.next()) {
+				b = new Booking();
+				b.setBookingId(rs.getInt("booking_id"));
+				b.setUserId(rs.getInt("user_id"));
+				b.setRoomId(rs.getInt("room_id"));
+				b.setCheckIn(rs.getDate("check_in"));
+				b.setCheckOut(rs.getDate("check_out"));
+				b.setQuantity(rs.getInt("quantity"));
+				b.setStatus(rs.getString("status"));
+				b.setCreatedAt(rs.getTimestamp("created_at"));
+				b.setOrderId(rs.getInt("order_id"));
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
+
 	public int updateOrderId(int bookingId, int orderId) {
 		try {
 			creatCon();

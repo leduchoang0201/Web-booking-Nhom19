@@ -268,6 +268,27 @@ public class UserDAO implements InterfaceDao<User> {
 		}
 		return 0;
 	}
+	public User getUserById(int id) {
+		User user = null;
+		try {
+			creatCon();
+			String sql = "SELECT * FROM users WHERE user_id = ?";
+			PreparedStatement pr = con.prepareStatement(sql);
+			pr.setInt(1, id);
+			ResultSet rs = pr.executeQuery();
+			if (rs.next()) {
+				user = new User();
+				user.setId(rs.getInt("user_id"));
+				user.setName(rs.getString("name"));
+				user.setEmail(rs.getString("email"));
+				user.setCreatedAt(rs.getDate("created_at"));
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
 
 
 }
