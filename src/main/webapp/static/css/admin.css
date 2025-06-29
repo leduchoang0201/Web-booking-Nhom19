@@ -1,386 +1,168 @@
-@charset "UTF-8";
+/* ==== TOÀN TRANG ==== */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    background-color: #f5faff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
     color: #343a40;
+    padding: 20px;
 }
 
-/* Header */
+/* ==== NAV TABS ==== */
+.nav-tabs {
+    margin: 20px 0;
+    border-bottom: 2px solid #0d6efd;
+}
+
+.nav-tabs .nav-link {
+    color: #0d6efd;
+    background-color: #e9f3ff;
+    border: 1px solid transparent;
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+    margin-right: 5px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: #d2e7ff;
+    color: #084298;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #ffffff;
+    border-color: #0d6efd #0d6efd #ffffff;
+    font-weight: 600;
+    color: #0a58ca;
+}
+
+/* ==== TAB CONTENT ==== */
+.tab-content {
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 .5rem .5rem;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.1);
+}
+
+/* ==== SECTION TITLE ==== */
 h2 {
     font-size: 1.5rem;
-    font-weight: 600;
-    color: #007bff;
+    margin-bottom: 20px;
+    color: #0d6efd;
 }
 
-/* Navbar / Top Bar */
-.d-flex.justify-content-end {
-    background-color: #007bff;
-    padding: 10px;
-    color: white;
-    border-radius: 5px;
-}
-
-.d-flex.justify-content-end .btn {
-    margin-left: 10px;
-}
-
-/* Table Styling */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid #28a745; /* Green border for tables */
-}
-
-th, td {
-    padding: 12px;
-    text-align: center;
+/* ==== TABLE ==== */
+.table {
+    background-color: #fff;
     border: 1px solid #dee2e6;
 }
 
-th {
-    background-color: #007bff;
-    color: white;
+.table thead th {
+    background-color: #e6f0ff;
+    color: #084298;
     font-weight: 600;
-    border-bottom: 3px solid #28a745; /* Green bottom border for headers */
+    text-align: center;
 }
 
-td {
-    font-size:1000p;
-    color: #6c757d;
+.table tbody td, .table tbody th {
+    vertical-align: middle;
+    text-align: center;
 }
 
-td button {
-    margin: 0 5px;
-}
-
-/* Button Styling */
+/* ==== BUTTONS ==== */
 .btn {
-    font-size: 0.875rem;
-    padding: 8px 15px;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
+    font-weight: 500;
 }
 
-/* Different color for buttons */
 .btn-primary {
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-success:hover {
+    background-color: #157347;
 }
 
 .btn-warning {
     background-color: #ffc107;
-    border: none;
-    border-radius: 5px;
+    border-color: #ffc107;
+    color: #000;
 }
 
 .btn-warning:hover {
     background-color: #e0a800;
+    color: #000;
 }
 
 .btn-danger {
     background-color: #dc3545;
-    border: none;
-    border-radius: 5px;
+    border-color: #dc3545;
 }
 
 .btn-danger:hover {
     background-color: #c82333;
 }
 
-.btn-success {
-    background-color: #28a745;
-    border: none;
+/* ==== ALERT ==== */
+.alert {
+    font-size: 0.95rem;
+    padding: 12px 20px;
     border-radius: 5px;
 }
 
-.btn-success:hover {
-    background-color: #218838;
-}
-
-/* Modal Button Styling */
-button[data-bs-toggle="modal"] {
-    font-size: 0.875rem;
-    padding: 8px 15px;
-    border-radius: 5px;
-}
-
-/* No room / No booking message */
-.text-center {
-    font-size: 1rem;
-    color: #888;
-    font-style: italic;
-}
-
-/* Form inline button */
-form {
-    display: inline;
-}
-
-/* Modal Styling */
-.modal-content {
-    border-radius: 8px;
-    padding: 20px;
-    border: 2px solid #dc3545; /* Red border for modals */
-}
-
+/* ==== MODAL ==== */
 .modal-header {
-    background-color: #007bff;
+    background-color: #0d6efd;
     color: white;
-    border-radius: 8px 8px 0 0;
-    border-bottom: 2px solid #ffc107; /* Yellow border for modal header */
 }
 
-.modal-header h5 {
-    font-size: 1.2rem;
+.modal-title {
+    font-weight: bold;
 }
 
-.modal-footer {
-    text-align: center;
-}
-
-/* Add colorful borders around sections */
-.d-flex.justify-content-between {
-    border: 2px solid #28a745; /* Green border for section headers */
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
-
-.d-flex.justify-content-between h2 {
-    color: #28a745; /* Green title color */
-}
-
-/* Colorful border around the whole section */
-.table-responsive {
-    border: 3px solid #007bff; /* Blue border around the entire section */
-    border-radius: 5px;
-    padding: 20px;
-    margin-bottom: 30px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .d-flex.justify-content-between {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    table th, table td {
-        font-size: 0.85rem;
-    }
-}
-/* Modal Styling */
 .modal-content {
-    border-radius: 8px;
-    padding: 20px;
-    border: 2px solid #dc3545; /* Red border for modals */
+    border-radius: 0.5rem;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.15);
 }
 
-.modal-header {
-    background-color: #007bff;
-    color: white;
-    border-radius: 8px 8px 0 0;
-    border-bottom: 2px solid #ffc107; /* Yellow border for modal header */
-}
-
-.modal-header h5 {
-    font-size: 1.2rem;
-}
-
-.modal-footer {
-    text-align: center;
-}
-
-/* Add colorful borders around sections */
-.d-flex.justify-content-between {
-    border: 2px solid #28a745; /* Green border for section headers */
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
-
-.d-flex.justify-content-between h2 {
-    color: #28a745; /* Green title color */
-}
-
-/* Colorful border around the whole section */
-.table-responsive {
-    border: 3px solid #007bff; /* Blue border around the entire section */
-    border-radius: 5px;
-    padding: 20px;
-    margin-bottom: 30px;
-}
-
-/* Style for the Add User and Update User Modals */
-.modal-dialog {
-    max-width: 800px;
-    margin: auto;
-}
-
-.modal-body .form-control {
-    border-radius: 5px;
-    border: 1px solid #007bff;
-}
-
-.modal-body .form-label {
+/* ==== FORM ==== */
+.form-label {
     font-weight: 500;
-    color: #333;
+    color: #0d6efd;
 }
 
-button[type="submit"] {
-    background-color: #007bff;
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
 }
 
-button[type="submit"]:hover {
-    background-color: #0056b3;
+/* ==== SMALL BTN ==== */
+.btn-sm {
+    font-size: 0.75rem;
+    padding: 4px 10px;
 }
 
-/* Responsive Modal and Table Adjustments */
-@media (max-width: 768px) {
-    .modal-dialog {
-        max-width: 100%;
-        margin: 20px;
-    }
-
-    table th, table td {
-        font-size: 0.85rem;
-    }
-
-    .modal-body .form-control {
-        font-size: 0.9rem;
-    }
-
-    button[type="submit"] {
-        width: 100%;
-    }
+/* ==== BOOKING TABLE COLLAPSE ==== */
+.table-sm th {
+    background-color: #f0f8ff;
 }
 
-/* Success and Error Messages */
-.alert-success {
-    background-color: #28a745;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
+/* ==== LOGOUT SECTION ==== */
+.d-flex.justify-content-end p {
+    color: #0d6efd;
     font-weight: 500;
-    margin-top: 20px;
+    margin-top: 10px;
 }
-
-.alert-danger {
-    background-color: #dc3545;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    font-weight: 500;
-    margin-top: 20px;
-}
-
-/* Table Styling */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid #28a745; /* Green border for tables */
-}
-
-th, td {
-    padding: 12px;
-    text-align: center;
-    border: 1px solid #dee2e6;
-}
-
-th {
-    background-color: #007bff;
-    color: black;
-    font-weight: 600;
-    border-bottom: 3px solid #28a745; /* Green bottom border for headers */
-}
-
-td {
-    font-size: 0.9rem;
-    color: #6c757d;
-}
-
-td button {
-    margin: 0 5px;
-}
-
-/* Button Styling */
-.btn {
-    font-size: 0.875rem;
-    padding: 8px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-/* Different color for buttons */
-.btn-primary {
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-}
-
-.btn-warning {
-    background-color: #ffc107;
-    border: none;
-    border-radius: 5px;
-}
-
-.btn-warning:hover {
-    background-color: #e0a800;
-}
-
-.btn-danger {
-    background-color: #dc3545;
-    border: none;
-    border-radius: 5px;
-}
-
-.btn-danger:hover {
-    background-color: #c82333;
-}
-
-.btn-success {
-    background-color: #28a745;
-    border: none;
-    border-radius: 5px;
-}
-
-.btn-success:hover {
-    background-color: #218838;
-}
-
-/* Text center for empty user list */
-.text-center {
-    font-size: 1rem;
-    color: #888;
-    font-style: italic;
-}
-
-/* Modal button styles */
-button[data-bs-toggle="modal"] {
-    font-size: 0.875rem;
-    padding: 8px 15px;
-    border-radius: 5px;
-}
-

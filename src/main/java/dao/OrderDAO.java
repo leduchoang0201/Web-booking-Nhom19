@@ -104,6 +104,33 @@ public class OrderDAO implements InterfaceDao<Order> {
         }
         return list;
     }
+    public Order getOrderById(int orderId) {
+        Order order = null;
+        try {
+            creatCon();
+            String sql = "SELECT * FROM orders WHERE order_id = ?";
+            PreparedStatement pr = con.prepareStatement(sql);
+            pr.setInt(1, orderId);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                order = new Order();
+                order.setOrderId(rs.getInt("order_id"));
+                order.setUserId(rs.getInt("user_id"));
+                order.setCustomerName(rs.getString("customer_name"));
+                order.setCustomerEmail(rs.getString("customer_email"));
+                order.setCustomerPhone(rs.getString("customer_phone"));
+                order.setPublicKeyString(rs.getString("public_key"));
+                order.setSignature(rs.getString("signature"));
+                order.setTotalPrice(rs.getDouble("total_price"));
+                order.setTimeStamp(rs.getLong("time_stamp"));
+                order.setHashData(rs.getString("hash_data"));
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return order;
+    }
 
     @Override
     public int delete(int id) {
@@ -125,7 +152,7 @@ public class OrderDAO implements InterfaceDao<Order> {
     public int update(Order order) {
         try {
             creatCon();
-            String sql = "UPDATE orders SET customer_name = ?, customer_email = ?, customer_phone = ?, public_key = ?, signature = ?, time_stamp = ? WHERE order_id = ?";
+            String sql = "UPDATE orders SET customer_name = ?, customer_email = ?, customer_phone = ?, public_key = ?, signature = ?, time_stamp = ?, total_price = ? WHERE order_id = ?";
             PreparedStatement pr = con.prepareStatement(sql);
             pr.setString(1, order.getCustomerName());
             pr.setString(2, order.getCustomerEmail());
@@ -133,7 +160,8 @@ public class OrderDAO implements InterfaceDao<Order> {
             pr.setString(4, order.getPublicKeyString());
             pr.setString(5, order.getSignature());
             pr.setLong(6, order.getTimeStamp());
-            pr.setInt(7, order.getOrderId());
+            pr.setDouble(7, order.getTotalPrice());
+            pr.setInt(8, order.getOrderId());
 
             int result = pr.executeUpdate();
             con.close();
@@ -143,4 +171,5 @@ public class OrderDAO implements InterfaceDao<Order> {
         }
         return 0;
     }
+
 }
